@@ -13,6 +13,9 @@ gem "puma", ">= 5.0"
 gem "devise"
 gem "devise-jwt"
 
+# API Serialization
+gem "jsonapi-serializer"
+
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS)
 gem "rack-cors"
 
