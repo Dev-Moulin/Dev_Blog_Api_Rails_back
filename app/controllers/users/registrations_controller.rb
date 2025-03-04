@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-class Users::RegistrationsController < Devise::RegistrationsController
+class Users::RegistrationsController < ApplicationController
+  include ActionController::MimeResponds
+  respond_to :json
+
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
 
@@ -9,10 +12,22 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #   super
   # end
 
-  # POST /resource
-  # def create
-  #   super
-  # end
+  def create
+    user = User.new(sign_up_params)
+    if user.save
+      render json: {
+        status: { code: 200, message: 'Inscription réussie.' },
+        data: UserSerializer.new(user).serializable_hash[:data][:attributes]
+      }
+    else
+      render json: {
+        status: { 
+          message: "L'utilisateur n'a pas pu être créé.",
+          errors: user.errors.full_messages 
+        }
+      }, status: :unprocessable_entity
+    end
+  end
 
   # GET /resource/edit
   # def edit
@@ -59,4 +74,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # def after_inactive_sign_up_path_for(resource)
   #   super(resource)
   # end
+
+  private
+
+  def sign_up_params
+    params.require(:user).permit(:email, :password, :password_confirmation)
+  end
+
+  def respond_with(resource, _opts = {})
+    render_resource(resource)
+  end
 end
