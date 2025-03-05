@@ -8,10 +8,16 @@ class Users::SessionsController < Devise::SessionsController
   #   super
   # end
 
-  # POST /resource/sign_in
-  # def create
-  #   super
-  # end
+  def create
+    self.resource = warden.authenticate!(auth_options)
+    sign_in(resource_name, resource)
+    token = current_token
+    render json: {
+      status: { code: 200, message: 'Connecté avec succès.' },
+      data: UserSerializer.new(resource).serializable_hash[:data][:attributes],
+      token: token
+    }
+  end
 
   # DELETE /resource/sign_out
   # def destroy
@@ -27,11 +33,8 @@ class Users::SessionsController < Devise::SessionsController
 
   private
 
-  def respond_with(resource, _opts = {})
-    render json: {
-      status: { code: 200, message: 'Connecté avec succès.' },
-      data: UserSerializer.new(resource).serializable_hash[:data][:attributes]
-    }
+  def current_token
+    request.env['warden-jwt_auth.token']
   end
 
   def respond_to_on_destroy
