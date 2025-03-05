@@ -15,9 +15,11 @@ class Users::RegistrationsController < ApplicationController
   def create
     user = User.new(sign_up_params)
     if user.save
+      token = user.generate_jwt
       render json: {
         status: { code: 200, message: 'Inscription réussie.' },
-        data: UserSerializer.new(user).serializable_hash[:data][:attributes]
+        data: UserSerializer.new(user).serializable_hash[:data][:attributes],
+        token: token
       }
     else
       render json: {
