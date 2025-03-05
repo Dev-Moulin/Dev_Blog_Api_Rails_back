@@ -154,3 +154,59 @@ L'API est configurée pour accepter les requêtes de `http://localhost:3000` ave
 
 - Headers autorisés : `Authorization`, `Content-Type`
 - Méthodes autorisées : `GET`, `POST`, `PUT`, `DELETE`
+
+## Tester l'API avec curl
+
+Voici les commandes pour tester les différentes fonctionnalités de l'API :
+
+### Authentification
+
+```bash
+# Inscription (Register)
+curl -X POST http://localhost:3001/signup \
+-H "Content-Type: application/json" \
+-d '{"user": {"email": "test@example.com", "password": "password123", "password_confirmation": "password123"}}'
+
+# Connexion (Login)
+curl -X POST http://localhost:3001/login \
+-H "Content-Type: application/json" \
+-d '{"user": {"email": "test@example.com", "password": "password123"}}' \
+-v
+```
+
+### Articles
+
+```bash
+# Voir tous les articles (sans authentification)
+curl http://localhost:3001/api/v1/articles
+
+# Voir un article spécifique (sans authentification)
+curl http://localhost:3001/api/v1/articles/1
+
+# Créer un article (avec authentification)
+curl -X POST http://localhost:3001/api/v1/articles \
+-H "Authorization: Bearer VOTRE_TOKEN_JWT" \
+-H "Content-Type: application/json" \
+-d '{"article": {"title": "Mon Article", "content": "Contenu de mon article"}}'
+
+# Modifier un article (avec authentification)
+curl -X PUT http://localhost:3001/api/v1/articles/1 \
+-H "Authorization: Bearer VOTRE_TOKEN_JWT" \
+-H "Content-Type: application/json" \
+-d '{"article": {"title": "Titre modifié", "content": "Contenu modifié"}}'
+
+# Supprimer un article (avec authentification)
+curl -X DELETE http://localhost:3001/api/v1/articles/1 \
+-H "Authorization: Bearer VOTRE_TOKEN_JWT"
+```
+
+### Vérification du Token
+
+```bash
+# Vérifier si le token est valide
+curl http://localhost:3001/api/v1/articles \
+-H "Authorization: Bearer VOTRE_TOKEN_JWT" \
+-v
+```
+
+**Note** : Remplacez `VOTRE_TOKEN_JWT` par le token reçu lors de la connexion.
